@@ -1,0 +1,9 @@
+{
+    "argv": [
+        "python",
+        "fyr/fyr_kernel.py",
+        "-f",
+        "{connection_file}"
+    ],
+    "display_name": "Fyr"
+}
