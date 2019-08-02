@@ -1,7 +1,7 @@
 {
     "argv": [
         "python",
-        "jupyter-fyr-kernel/fyr_kernel.py",
+        "/usr/local/share/jupyter/kernels/jupyter-fyr-kernel/fyr_kernel.py",
         "-f",
         "{connection_file}"
     ],
