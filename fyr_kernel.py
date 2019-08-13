@@ -1,6 +1,9 @@
 import os
 import os.path as op
 import tempfile
+import subprocess
+from subprocess import run, PIPE
+
 
 # Import 'getouput()' function provided by IPython
 # Allows to do system calls from Python
@@ -21,11 +24,14 @@ def exec_fyr(code):
         with open(source_path, "w") as f:
             f.write(code)
 
-        # Compile the Fyr code into an executable
-        os.system("fyrc -n {}".format(source_path))
+        # Compile the Fyr code into an executable and save stdout/stderr
+        res = run(["fyrc", "-n", source_path], stdout=PIPE, stderr=subprocess.STDOUT)
 
-        # Execute program and return output
-        return getoutput(program_path)
+        # Execute program depending on returncode and return output or stdout+stderr
+        if res.returncode == 0:
+            return getoutput(program_path)
+        else:
+            return res.stdout.decode("utf-8")
 
 
 """Fyr wrapper kernel"""
