@@ -29,9 +29,9 @@ def exec_fyr(code):
 
         # Execute program depending on returncode and return output or stdout+stderr
         if res.returncode == 0:
-            return getoutput(program_path)
+            return [getoutput(program_path), 0]
         else:
-            return res.stdout.decode("utf-8")
+            return [res.stdout.decode("utf-8"), 1]
 
 
 """Fyr wrapper kernel"""
@@ -63,7 +63,11 @@ class FyrKernel(Kernel):
             output = exec_fyr(code)
 
             # Send back result to frontend
-            stream_content = {"name": "stdout", "text": output}
+            stream_content = (
+                {"name": "stdout", "text": output[0]}
+                if output[1] == 0
+                else {"name": "stderr", "text": output[0]}
+            )
             self.send_response(self.iopub_socket, "stream", stream_content)
 
         return {
