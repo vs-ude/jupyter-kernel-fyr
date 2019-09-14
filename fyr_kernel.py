@@ -57,11 +57,11 @@ class FyrKernel(Kernel):
         self, code, silent, store_history=True, user_expressions=None, allow_stdin=False
     ):
         """Function which is run when a code cell is executed"""
+        
+        # Run Fyr code and get output
+        output = exec_fyr(code)
 
         if not silent:
-            # Run Fyr code and get output
-            output = exec_fyr(code)
-
             # Send back result to frontend
             stream_content = (
                 {"name": "stdout", "text": output[0]}
