@@ -9,7 +9,7 @@ import base64
 def exec_fyr(code):
     """Compile, execute Fyr code, and return the standard output."""
 
-    # Create temp folder which gets deleted afterwards
+    # Create temp folder which gets deleted upon leaving block
     with tempfile.TemporaryDirectory() as tmpdir:
 
         # Define source and executable filenames
@@ -62,20 +62,20 @@ class FyrKernel(Kernel):
     ):
         """Function which is run when a code cell is executed"""
         
-        # Run Fyr code and get output
-        output = exec_fyr(code)
+        # Run Fyr code and get result (output)
+        result = exec_fyr(code)
 
         if not silent:
             # Send back result to frontend depending on returnvalue of exec_fyr
             # 0 = text, 1 = error, 2 = image
-            if output[1] == 0:
-                stream_content = {"name": "stdout", "text": output[0]}
+            if result[1] == 0:
+                stream_content = {"name": "stdout", "text": result[0]}
                 msg_type = "stream"
-            elif output[1] == 2:
-                stream_content = {"data": {"image/png": output[0]}}
+            elif result[1] == 2:
+                stream_content = {"data": {"image/png": result[0]}}
                 msg_type = "display_data"
             else:
-                stream_content = {"name": "stderr", "text": output[0]}
+                stream_content = {"name": "stderr", "text": result[0]}
                 msg_type = "stream"
 
             self.send_response(self.iopub_socket, msg_type, stream_content)
