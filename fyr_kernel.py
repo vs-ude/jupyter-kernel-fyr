@@ -66,7 +66,7 @@ class FyrKernel(Kernel):
         output = exec_fyr(code)
 
         if not silent:
-            # Send back result to frontend depening on returnvalue of exec_fyr
+            # Send back result to frontend depending on returnvalue of exec_fyr
             # 0 = text, 1 = error, 2 = image
             if output[1] == 0:
                 stream_content = {"name": "stdout", "text": output[0]}
