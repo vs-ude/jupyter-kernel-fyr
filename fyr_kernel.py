@@ -31,9 +31,9 @@ def exec_fyr(code):
             output = run([program_path], stdout=PIPE)
             if ("image" in magic.from_buffer(output.stdout, mime=True)):
                 png = run(["convert", "-", "png:-"], input=output.stdout, stdout=PIPE)
-                return [base64.b64encode(png.stdout), 2]
+                return [base64.b64encode(png.stdout).decode("utf-8"), 2]
             else:
-                return [output.stdout, 0]
+                return [output.stdout.decode("utf-8"), 0]
         else:
             return [res.stdout.decode("utf-8"), 1]
 
