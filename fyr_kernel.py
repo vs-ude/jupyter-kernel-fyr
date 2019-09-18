@@ -3,7 +3,8 @@ import os.path as op
 import tempfile
 import subprocess
 from subprocess import run, PIPE
-
+import magic
+import base64
 
 # Import 'getouput()' function provided by IPython
 # Allows to do system calls from Python
@@ -28,8 +29,16 @@ def exec_fyr(code):
         res = run(["fyrc", "-n", source_path], stdout=PIPE, stderr=subprocess.STDOUT)
 
         # Execute program depending on returncode and return output or stdout+stderr
+        # Check if Image in Mimetype, if yes: convert to png (because Jupyter can display PNG)
+        # And return base64 encoded png
+        # 0 = text, 1 = error, 2 = image
         if res.returncode == 0:
-            return [getoutput(program_path), 0]
+            output = getoutput(program_path)
+            if ("image" in magic.from_buffer(output.encode(), mime=True)):
+                png = run(["convert", "-", "png:-"], input=output.encode(), stdout=PIPE)
+                return [base64.b64encode(png.stdout), 2]
+            else:
+                return [output, 0]
         else:
             return [res.stdout.decode("utf-8"), 1]
 
@@ -62,13 +71,19 @@ class FyrKernel(Kernel):
         output = exec_fyr(code)
 
         if not silent:
-            # Send back result to frontend
-            stream_content = (
-                {"name": "stdout", "text": output[0]}
-                if output[1] == 0
-                else {"name": "stderr", "text": output[0]}
-            )
-            self.send_response(self.iopub_socket, "stream", stream_content)
+            # Send back result to frontend depening on returnvalue of exec_fyr
+            # 0 = text, 1 = error, 2 = image
+            if output[1] == 0:
+                stream_content = {"name": "stdout", "text": output[0]}
+                msg_type = "stream"
+            elif output[1] == 2:
+                stream_content = {"data": {"image/png": output[0]}}
+                msg_type = "display_data"
+            else:
+                stream_content = {"name": "stderr", "text": output[0]}
+                msg_type = "stream"
+
+            self.send_response(self.iopub_socket, msg_type, stream_content)
 
         return {
             "status": "ok",
