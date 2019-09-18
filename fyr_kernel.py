@@ -1,14 +1,9 @@
-import os
 import os.path as op
 import tempfile
 import subprocess
 from subprocess import run, PIPE
 import magic
 import base64
-
-# Import 'getouput()' function provided by IPython
-# Allows to do system calls from Python
-from IPython.utils.process import getoutput
 
 
 def exec_fyr(code):
@@ -33,12 +28,12 @@ def exec_fyr(code):
         # And return base64 encoded png
         # 0 = text, 1 = error, 2 = image
         if res.returncode == 0:
-            output = getoutput(program_path)
-            if ("image" in magic.from_buffer(output.encode(), mime=True)):
-                png = run(["convert", "-", "png:-"], input=output.encode(), stdout=PIPE)
+            output = run([program_path], stdout=PIPE)
+            if ("image" in magic.from_buffer(output.stdout, mime=True)):
+                png = run(["convert", "-", "png:-"], input=output.stdout, stdout=PIPE)
                 return [base64.b64encode(png.stdout), 2]
             else:
-                return [output, 0]
+                return [output.stdout, 0]
         else:
             return [res.stdout.decode("utf-8"), 1]
 
