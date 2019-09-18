@@ -46,7 +46,7 @@ class FyrKernel(Kernel):
 
     # Kernel information
     implementation = "Fyr"
-    implementation_version = "1.0"
+    implementation_version = "1.1"
     language = "fyr"
     language_version = "0.1.4"
     language_info = {
