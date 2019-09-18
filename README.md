@@ -3,15 +3,16 @@
 ## Manual installation
 
 Make sure you have the following requirements installed:
-  * jupyter
-  * python 3
-  * fyr (https://github.com/vs-ude/fyr)
+* jupyter
+* python 3
+  * [python-magic](https://pypi.org/project/python-magic/)
+* [fyr](https://github.com/vs-ude/fyr)
 
 ### Step-by-step:
 
- * `git clone` this repo
- * `sudo jupyter kernelspec install jupyter-fyr-kernel` (as root, otherwise you have to change path in kernel.json)
- * `jupyter notebook`. Enjoy!
+* `git clone` this repo
+* `sudo jupyter kernelspec install jupyter-fyr-kernel` (as root, otherwise you have to change path in kernel.json)
+* `jupyter notebook`. Enjoy!
 
 ## Updating
 
